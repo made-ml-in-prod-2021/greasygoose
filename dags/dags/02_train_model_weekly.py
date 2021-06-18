@@ -19,7 +19,7 @@ with DAG(
     preprocess = DockerOperator(
         task_id = "preprocess",
         image = "airflow-preprocess",
-        command = "/data/raw/{{ ds }} /data/processed/{{ ds }} /data/model/{{ ds }}",
+        command = "--input-dir /data/raw/{{ ds }} --output-dir /data/processed/{{ ds }} --model_dir /data/model/{{ ds }}",
         network_mode = "bridge",
         do_xcom_push = False,
         volumes = [VOLUME],
@@ -28,7 +28,7 @@ with DAG(
     split = DockerOperator(
         task_id = "split",
         image = "airflow-split",
-        command = "/data/processed/{{ ds }} /data/split/{{ ds }}",
+        command = "--input-dir /data/processed/{{ ds }} --output-dir /data/split/{{ ds }}",
         network_mode = "bridge",
         do_xcom_push = False,
         volumes=[VOLUME]
@@ -37,7 +37,7 @@ with DAG(
     train = DockerOperator(
         task_id = "train",
         image = "airflow-train",
-        command = "/data/split/{{ ds }} /data/model/{{ ds }}",
+        command = "--input-dir /data/split/{{ ds }} --model-dir /data/model/{{ ds }}",
         network_mode = "bridge",
         do_xcom_push = False,
         volumes=[VOLUME]
@@ -46,13 +46,13 @@ with DAG(
     validate = DockerOperator(
         task_id = "validate",
         image = "airflow-validate",
-        command = "/data/split/{{ ds }} /data/model/{{ ds }}",
+        command = "--input-dir /data/split/{{ ds }} --model-dir /data/model/{{ ds }}",
         network_mode = "bridge",
         do_xcom_push = False,
         volumes=[VOLUME]
     )
 
-    finish = DummyOperator(task_id = "finish")
+    finish = DummyOperator(task_id = "Finish")
 
     start >> preprocess >> split >> train >> validate >> finish
     

@@ -6,12 +6,12 @@ from sklearn.preprocessing import StandardScaler
 
 
 @click.command("preprocess")
-# @click.option("--input-dir")
-# @click.option("--output-dir")
-# @click.option("--model-dir")
-@click.argument("input-dir")
-@click.argument("output-dir")
-@click.argument("model-dir")
+@click.option("--input-dir")
+@click.option("--output-dir")
+@click.option("--model-dir")
+# @click.argument("input-dir")
+# @click.argument("output-dir")
+# @click.argument("model-dir")
 
 
 def preprocess(input_dir: str, output_dir: str, model_dir: str):
