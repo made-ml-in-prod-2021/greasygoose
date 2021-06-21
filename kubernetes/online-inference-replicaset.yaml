@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+
+metadata:
+  name: online-inference-replicaset
+  labels:
+    app: online-inference
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: online-inference
+  template:
+    metadata:
+      name: online-inference
+      labels:
+        app: online-inference
+    spec:
+      containers:
+        - image: greasygoose/online_inference:v2
+          name: online-inference
+#          command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+          ports:
+          - name: probe-port
+            containerPort: 8000
+            protocol: TCP
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "500Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: probe-port
+            initialDelaySeconds: 60
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: probe-port
+            initialDelaySeconds: 5
+            periodSeconds: 3
