@@ -7,24 +7,16 @@ import numpy as np
 import pandas as pd
 import uvicorn
 from fastapi import FastAPI
-
-
 from pydantic import BaseModel, conlist
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
 import requests
-import datetime
-import time
 
 logger = logging.getLogger(__name__)
 
 global SELECTED_FEATURES
 SELECTED_FEATURES = {"cat": ["cp", "restecg", "slope"],
                    "num": ["thalach"] }
-start_time = datetime.datetime.now()
-SLEEP_TIME = 60
-CRUSH_TIME = 3*60
-
 
 
 def load_object(path: str) -> Pipeline:
@@ -74,10 +66,8 @@ def main():
     return "it is entry point of our classifier"
 
 
-
 @app.on_event("startup")
 def load_model():
-    time.sleep(SLEEP_TIME)
     global model
     model_path = r"model/model.pkl"
     if model_path is None:
@@ -88,11 +78,8 @@ def load_model():
     model = load_object(model_path)
 
 
-@app.get("/health")
+@app.get("/heath")
 def health() -> bool:
-    current_delay = datetime.datetime.now() - start_time
-    if current_delay.seconds > CRUSH_TIME:
-        raise Exception("Application stop")
     return not (model is None)
 
 
