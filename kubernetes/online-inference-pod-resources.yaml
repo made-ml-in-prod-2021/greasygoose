@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: online-inference-resource
+  labels:
+    app: online-inference
+spec:
+  containers:
+    - image: greasygoose/online_inference:v1
+      name: online-inference
+#      command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+      ports:
+        - containerPort: 8000
+      resources:
+        requests:
+          memory: "128Mi"
+          cpu: "250m"
+        limits:
+          memory: "500Mi"
+          cpu: "500m"
