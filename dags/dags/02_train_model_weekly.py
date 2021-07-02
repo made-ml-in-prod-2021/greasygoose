@@ -2,8 +2,9 @@ from airflow import DAG
 from airflow.operators.dummy import DummyOperator
 from airflow.providers.docker.operators.docker import DockerOperator
 from airflow.utils.dates import days_ago
+import os
 
-from vars import VOLUME, default_args
+from vars import VOLUME, default_args, DATA_RAW_DIR, DATA_PROCESSED_DIR, MODEL_DIR
 
 
 with DAG(
@@ -19,7 +20,11 @@ with DAG(
     preprocess = DockerOperator(
         task_id = "preprocess",
         image = "airflow-preprocess",
-        command = "--input-dir /data/raw/{{ ds }} --output-dir /data/processed/{{ ds }} --model_dir /data/model/{{ ds }}",
+        # command = "--input-dir /data/raw/{{ ds }} --output-dir /data/processed/{{ ds }} --model-dir /data/model/{{ ds }}",
+        command= [DATA_RAW_DIR,
+                  DATA_PROCESSED_DIR,
+                  MODEL_DIR,
+                  ],
         network_mode = "bridge",
         do_xcom_push = False,
         volumes = [VOLUME],
@@ -28,7 +33,8 @@ with DAG(
     split = DockerOperator(
         task_id = "split",
         image = "airflow-split",
-        command = "--input-dir /data/processed/{{ ds }} --output-dir /data/split/{{ ds }}",
+        # command = "--input-dir /data/processed/{{ ds }} --output-dir /data/split/{{ ds }}",
+        command = DATA_PROCESSED_DIR,
         network_mode = "bridge",
         do_xcom_push = False,
         volumes=[VOLUME]
@@ -37,7 +43,10 @@ with DAG(
     train = DockerOperator(
         task_id = "train",
         image = "airflow-train",
-        command = "--input-dir /data/split/{{ ds }} --model-dir /data/model/{{ ds }}",
+        # command = "--input-dir /data/split/{{ ds }} --model-dir /data/model/{{ ds }}",
+        command = [DATA_PROCESSED_DIR,
+                   MODEL_DIR,
+                   ],
         network_mode = "bridge",
         do_xcom_push = False,
         volumes=[VOLUME]
@@ -46,7 +55,10 @@ with DAG(
     validate = DockerOperator(
         task_id = "validate",
         image = "airflow-validate",
-        command = "--input-dir /data/split/{{ ds }} --model-dir /data/model/{{ ds }}",
+        # command = "--input-dir /data/split/{{ ds }} --model-dir /data/model/{{ ds }}",
+        command = [DATA_PROCESSED_DIR,
+                   MODEL_DIR,
+                   ],
         network_mode = "bridge",
         do_xcom_push = False,
         volumes=[VOLUME]

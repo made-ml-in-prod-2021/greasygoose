@@ -7,11 +7,11 @@ from sklearn.ensemble import RandomForestClassifier
 
 
 @click.command("train")
-@click.option("--input-dir")
-@click.option("--model-dir")
+# @click.option("--input-dir")
+# @click.option("--model-dir")
 
-# @click.argument("input-dir")
-# @click.argument("output-dir")
+@click.argument("input-dir")
+@click.argument("model-dir")
 
 def train_model(input_dir: str, model_dir: str):
     # model = KNeighborsClassifier(n_neighbors=12, weights='distance')

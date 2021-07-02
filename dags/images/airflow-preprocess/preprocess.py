@@ -6,12 +6,12 @@ from sklearn.preprocessing import StandardScaler
 
 
 @click.command("preprocess")
-@click.option("--input-dir")
-@click.option("--output-dir")
-@click.option("--model-dir")
-# @click.argument("input-dir")
-# @click.argument("output-dir")
-# @click.argument("model-dir")
+# @click.option("--input-dir")
+# @click.option("--output-dir")
+# @click.option("--model-dir")
+@click.argument("input-dir")
+@click.argument("output-dir")
+@click.argument("model-dir")
 
 
 def preprocess(input_dir: str, output_dir: str, model_dir: str):
@@ -29,6 +29,7 @@ def preprocess(input_dir: str, output_dir: str, model_dir: str):
     os.makedirs(output_dir, exist_ok = True)
     df.to_csv(os.path.join(output_dir, "processed_data.csv"))
 
+    os.makedirs(model_dir, exist_ok=True)
     with open(os.path.join(model_dir, "scaler.pkl"), "wb") as f:
         pickle.dump(scaler, f)
 

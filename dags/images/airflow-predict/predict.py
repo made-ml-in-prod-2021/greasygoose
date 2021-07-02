@@ -23,8 +23,9 @@ def predict(input_dir: str, model_dir: str, output_dir: str):
         scaler = pickle.load(f)
     
     x = scaler.transform(data)
-    preds = int(model.predict(x))
-
+    preds = model.predict(x)
+    preds = pd.DataFrame({'Predictions': preds})
+    
     os.makedirs(output_dir, exist_ok = True)
     preds.to_csv(os.path.join(output_dir, "prediction.csv"))
 

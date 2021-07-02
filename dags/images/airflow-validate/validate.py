@@ -6,11 +6,11 @@ import pandas as pd
 
 
 @click.command("validate")
-@click.option("--input-dir")
-@click.option("--model-dir")
+# @click.option("--input-dir")
+# @click.option("--model-dir")
 
-# @click.argument("input-dir")
-# @click.argument("model-dir")
+@click.argument("input-dir")
+@click.argument("model-dir")
 
 def validate(input_dir: str, model_dir: str):
 
